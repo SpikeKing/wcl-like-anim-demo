@@ -11,7 +11,7 @@ import android.util.Property;
 import android.view.View;
 
 /**
- * 发散的小点
+ * 发散的点, 由大点小点组成, 两类点排列和颜色均错开, 速度先慢后快向外发射.
  * <p>
  * Created by wangchenlong on 16/1/6.
  */
@@ -78,7 +78,7 @@ public class DotsView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         mCenterX = w / 2;
         mCenterY = h / 2;
-        mMaxDotSize = 20;
+        mMaxDotSize = 20; // 点的大小
         mMaxOuterDotsRadius = w / 2 - mMaxDotSize * 2; // 最大外圈
         mMaxInnerDotsRadius = 0.8f * mMaxOuterDotsRadius; // 最大内圈
     }
@@ -89,7 +89,7 @@ public class DotsView extends View {
         drawInnerDotsFrame(canvas);
     }
 
-    // 外圈点
+    // 外圈点, 画若干点, 使用不同颜色, 中心位置CurrentRadius和点大小CurrentDotSize是变量.
     private void drawOuterDotsFrame(Canvas canvas) {
         for (int i = 0; i < DOTS_COUNT; i++) {
             int cX = (int) (mCenterX + mCurrentRadius1 * Math.cos(i * OUTER_DOTS_POSITION_ANGLE * Math.PI / 180));
@@ -98,6 +98,7 @@ public class DotsView extends View {
         }
     }
 
+    // 内圈点, 与外圈点错开10, 颜色也与外圈点开, 中心位置CurrentRadius和点大小CurrentDotSize是变量.
     private void drawInnerDotsFrame(Canvas canvas) {
         for (int i = 0; i < DOTS_COUNT; i++) {
             int cX = (int) (mCenterX + mCurrentRadius2 * Math.cos((i * OUTER_DOTS_POSITION_ANGLE - 10) * Math.PI / 180));
@@ -112,10 +113,12 @@ public class DotsView extends View {
     public void setCurrentProgress(float currentProgress) {
         mCurrentProgress = currentProgress;
 
+        // 更新位置
         updateInnerDotsPosition();
         updateOuterDotsPosition();
-        updateDotsPaints();
-        updateDotsAlpha();
+
+        updateDotsPaints(); // 更新颜色
+        updateDotsAlpha(); // 更新透明度
 
         postInvalidate(); // 每次设置都会延迟重绘
     }
@@ -126,7 +129,7 @@ public class DotsView extends View {
 
     // 更新内部点
     private void updateInnerDotsPosition() {
-        // 0.3以上不懂
+        // 0.3以上不动
         if (mCurrentProgress < 0.3f) {
             this.mCurrentRadius2 = (float) Utils.mapValueFromRangeToRange(mCurrentProgress, 0, 0.3f, 0.f, mMaxInnerDotsRadius);
         } else {
